@@ -3,10 +3,21 @@
             [taoensso.carmine :as car :refer (wcar)]))
 
 ;; test
-(send-auth-token token-storage 500 sms-deliverer "+12132201494")
+(send-auth-token redis-opts 500 sms-deliverer "+12132201494")
 
 (send-auth-token storage uid deliverer address) ;; uid is stored and sent to the address
-(validate-auth-token storage token) ;; returns uid or nil or error
+(validate-auth-token redis-opts token) ;; returns uid or nil or error
+
+(validate-auth-token redis-opts "SE7fWYE4nLEc")
+
+(def token-storage (create-redis-storage {:pool {}
+                                          :spec {:host "127.0.0.1" :port 6379}
+                                          :prefix "TKN"}))
+
+(def redis-opts {:pool {}
+                 :spec {:host "127.0.0.1" :port 6379}
+                 :prefix "TKN"})
+
 
 (defn create-twilio-deliverer [{twilio-sid :twilio-sid
                                 twilio-auth-token :twilio-auth-token
@@ -31,18 +42,28 @@
       :subject (:subject- options)
       :body body}))))
 
-(defn send-auth-token [storage uid deliverer address]
+(defn send-auth-token [redis-opts uid deliverer address]
   (let [auth-token (create-auth-token)]
-    (print
-  (if (storage auth-token uid)
-    (deliverer auth-token address)
-    (println "ggg")
-  ))))
+    (if (store-auth-token redis-opts auth-token uid)
+      (deliverer auth-token address)
+      (println "ggg")
+    )))
 
-(defn create-redis-storage [{prefix :prefix :as conn-opts}]
+
+(defn validate-auth-token [{prefix :prefix :as redis-opts} auth-token]
+  (let [prefixed-token (append-prefix [prefix auth-token])]
+    (car/wcar redis-opts (car/get prefixed-token))))
+
+(defn store-auth-token [{prefix :prefix :as redis-opts} auth-token uid]
+  (let [prefixed-token (append-prefix prefix auth-token)]
+    (car/wcar redis-opts (car/set prefixed-token uid))))
+
+(defn create-redis-storage [{prefix :prefix :as redis-opts}]
   (fn [auth-token uid]
-    (let [prefixed-token (clojure.string/join "/" [prefix auth-token])]
+    (let [prefixed-token (append-prefix [prefix auth-token])]
          (car/wcar conn-opts (car/set prefixed-token uid)))))
+
+(defn append-prefix [args] (clojure.string/join "/" args))
 
 (def url-safe-chars
   (let [chars-between #(map char (range (int %1) (int %2)))]
