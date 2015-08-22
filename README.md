@@ -1,14 +1,51 @@
 # passwordless
 
-A Clojure library designed to ... well, that part is up to you.
+A Clojure library for passwordless authentication
 
 ## Usage
 
-FIXME
+Currently, passwordless exposes four functions: `send-auth-token`, `validate-auth-token`,
+`create-twilio-deliverer`, `create-simple-smtp-deliverer.
+
+Using Twilio to deliver sms:
+
+> (def sms-deliverer
+       (create-twilio-deliverer {:twilio-sid ""
+                                 :twilio-auth-token ""
+                                 :sender "+18008008888"
+                                 :template "Welcome to Ladder Life! Click here to continue: http://ladderlife.com/auth?token=%s"}))
+> (def redis-opts {:pool {}
+                   :spec {:host "127.0.0.1" :port 6379}
+                   :prefix "TKN"})
+> (send-auth-token redis-opts uid sms-deliverer phone-number)
+
+Using SMTP services:
+
+> (def smtp-deliverer
+       (create-simple-smtp-deliverer {:host "smtp.ladderlife.com"
+                                      :user "ladder"
+                                      :pass ""}
+                                     {:from "hello@ladderlife.com"
+                                      :subject "Welcome to Ladder Life"
+                                      :template "Click here to continue: http://laderlife.com/auth?token=%s"}))
+
+> (send-auth-token redis-opts uid sms-deliverer phone-number)
+
+To validate:
+
+> (validate-auth-token auth-token) ; returns uid or nil if auth-token doesn't exist
+
+## Todo
+
+- Handling error
+- Offer better smtp templates (support html)
+- Documentation for rolling your own delivery system
+- Documentation for rolling your own storage (will depend on error handling)
+- Extract delivery and storage services from core
 
 ## License
 
-Copyright © 2015 FIXME
+Copyright © 2015 Ladder Life
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
