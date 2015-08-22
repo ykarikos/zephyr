@@ -42,6 +42,7 @@ To validate:
 - Documentation for rolling your own delivery system
 - Documentation for rolling your own storage (will depend on error handling)
 - Extract delivery and storage services from core
+- Rename library
 
 ## License
 
