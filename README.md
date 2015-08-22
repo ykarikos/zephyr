@@ -9,32 +9,32 @@ Currently, Zephyr exposes four functions: `send-auth-token`, `validate-auth-toke
 
 Using Twilio to deliver sms:
 
-> (in-ns 'zephyr.core)
-> (def sms-deliverer
-       (create-twilio-deliverer {:twilio-sid ""
-                                 :twilio-auth-token ""
-                                 :sender "+18008008888"
-                                 :template "Welcome to Ladder Life! Click here to continue: http://ladderlife.com/auth?token=%s"}))
-> (def redis-opts {:pool {}
-                   :spec {:host "127.0.0.1" :port 6379}
-                   :prefix "TKN"})
-> (send-auth-token redis-opts uid sms-deliverer phone-number)
+    (in-ns 'zephyr.core)
+    (def sms-deliverer
+         (create-twilio-deliverer {:twilio-sid ""
+                                   :twilio-auth-token ""
+                                   :sender "+18008008888"
+                                   :template "Welcome to Ladder Life! Click here to continue: http://ladderlife.com/auth?token=%s"}))
+    (def redis-opts {:pool {}
+                     :spec {:host "127.0.0.1" :port 6379}
+                     :prefix "TKN"})
+    (send-auth-token redis-opts uid sms-deliverer phone-number)
 
 Using SMTP services:
 
-> (def smtp-deliverer
-       (create-simple-smtp-deliverer {:host "smtp.ladderlife.com"
-                                      :user "ladder"
-                                      :pass ""}
-                                     {:from "hello@ladderlife.com"
-                                      :subject "Welcome to Ladder Life"
-                                      :template "Click here to continue: http://laderlife.com/auth?token=%s"}))
+    (def smtp-deliverer
+         (create-simple-smtp-deliverer {:host "smtp.ladderlife.com"
+                                        :user "ladder"
+                                        :pass ""}
+                                       {:from "hello@ladderlife.com"
+                                        :subject "Welcome to Ladder Life"
+                                        :template "Click here to continue: http://laderlife.com/auth?token=%s"}))
 
-> (send-auth-token redis-opts uid sms-deliverer phone-number)
+    (send-auth-token redis-opts uid sms-deliverer phone-number)
 
 To validate:
 
-> (validate-auth-token auth-token) ; returns uid or nil if auth-token doesn't exist
+    (validate-auth-token auth-token) ; returns uid or nil if auth-token doesn't exist
 
 ## Todo
 
