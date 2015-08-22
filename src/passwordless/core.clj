@@ -1,4 +1,4 @@
-(ns passwordless.core
+(ns zephyr.core
   (:require [twilio.core :as twilio]
             [taoensso.carmine :as car :refer (wcar)]
             [postal.core :as postal :refer (send-message)]))

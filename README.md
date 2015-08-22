@@ -1,14 +1,15 @@
-# passwordless
+# Zephyr
 
 A Clojure library for passwordless authentication
 
 ## Usage
 
-Currently, passwordless exposes four functions: `send-auth-token`, `validate-auth-token`,
+Currently, Zephyr exposes four functions: `send-auth-token`, `validate-auth-token`,
 `create-twilio-deliverer`, `create-simple-smtp-deliverer.
 
 Using Twilio to deliver sms:
 
+> (in-ns 'zephyr.core)
 > (def sms-deliverer
        (create-twilio-deliverer {:twilio-sid ""
                                  :twilio-auth-token ""
