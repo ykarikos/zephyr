@@ -5,7 +5,7 @@ A Clojure library for passwordless authentication
 ## Usage
 
 Currently, Zephyr exposes four functions: `send-auth-token`, `validate-auth-token`,
-`create-twilio-deliverer`, `create-simple-smtp-deliverer.
+`create-twilio-deliverer`, `create-simple-smtp-deliverer`.
 
 Using Twilio to deliver sms:
 
@@ -31,9 +31,9 @@ Using SMTP services:
                                     :pass ""}
                                    {:from "hello@ladderlife.com"
                                     :subject "Welcome to Ladder Life"
-                                    :template "Click here to continue: http://laderlife.com/auth?token=%s"}))
+                                    :template "Click here to continue: http://ladderlife.com/auth?token=%s"}))
 
-(send-auth-token redis-opts uid sms-deliverer phone-number)
+(send-auth-token redis-opts uid smtp-deliverer email)
 ````
 
 To validate:
